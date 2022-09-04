@@ -53,4 +53,6 @@ function isValidBody(request) {
     return !request.body || typeof request.body === "undefined" || (request.body.email && request.body.password)
 }
 
-module.exports = checkLogin;
+module.exports = {
+    checkLogin
+};

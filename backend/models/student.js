@@ -3,13 +3,16 @@ const { Model, DataTypes } = require('sequelize');
 class Student extends Model {
   static init(sequelize) {
     super.init({
-      ra: DataTypes.INTEGER,
+      ra: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
       name: DataTypes.STRING,
       email: DataTypes.STRING,
       cpf: DataTypes.STRING
     }, {
       sequelize,
-      tableName: 'addresses',
       timestamps: false
     })
   }
