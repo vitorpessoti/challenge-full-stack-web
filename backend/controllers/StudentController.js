@@ -31,7 +31,7 @@ const store = async (req, res) => {
 }
 
 const update = async (req, res) => {
-    const { name, email, cpf } = req.body;
+    const { name, email } = req.body;
     const student = await Student.findByPk(req.params.ra);
 
     if (!student) {
@@ -41,7 +41,7 @@ const update = async (req, res) => {
         })
     }
 
-    const upd = await Student.update({ name, email, cpf }, {
+    const upd = await Student.update({ name, email }, {
         where: {
             ra: req.params.ra
         }
