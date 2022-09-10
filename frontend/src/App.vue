@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import HomePage from "./components/HomePage.vue";
+import HomePage from "./components/template/HomePage.vue";
 
 export default {
   name: "App",

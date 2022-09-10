@@ -8,8 +8,8 @@
             <div class="pa-12" v-html="body"></div>
           </v-card-text>
           <v-card-actions class="justify-end">
-            <v-btn text @click="cancel()">Não</v-btn>
-            <v-btn color="red" text @click="confirm()">Sim</v-btn>
+            <v-btn class="secondary-color" @click="cancel()">Não</v-btn>
+            <v-btn class="primary-color" @click="confirm()">Sim</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -29,6 +29,9 @@ export default {
     confirm() {
       this.$emit('confirm', false);
     },
+    cancel() {
+      this.$emit('cancel', false);
+    }
   },
 };
 </script>

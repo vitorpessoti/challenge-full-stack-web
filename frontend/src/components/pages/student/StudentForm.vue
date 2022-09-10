@@ -78,9 +78,9 @@
 </template>
 
 <script>
-import { createStudent, updateStudent } from "../services/student-service";
-import LoaderOverlay from "./Loader.vue";
-import DefaultDialog from "./DefaultDialog.vue";
+import { createStudent, updateStudent } from "../../../services/student-service";
+import LoaderOverlay from "../../Loader.vue";
+import DefaultDialog from "../../DefaultDialog.vue";
 
 export default {
   name: "StudentForm",

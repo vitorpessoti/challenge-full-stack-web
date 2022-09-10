@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import Login from "./Login.vue";
+import Login from "../pages/auth/Login.vue";
 import HeaderComponent from "./Header.vue";
 export default {
   name: "ContentComponent",

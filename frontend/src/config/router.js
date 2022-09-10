@@ -1,8 +1,8 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Login from '@/components/Login';
-import Student from '@/components/Student';
-import StudentForm from '@/components/StudentForm';
+import Login from '@/components/pages/auth/Login';
+import Student from '@/components/pages/student/Student';
+import StudentForm from '@/components/pages/student/StudentForm';
 
 Vue.use(VueRouter);
 

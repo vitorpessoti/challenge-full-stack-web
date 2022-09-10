@@ -46,9 +46,9 @@
 </template>
 
 <script>
-import { login } from "../services/auth-service";
-import LoaderOverlay from "./Loader.vue";
-import DefaultDialog from "./DefaultDialog.vue";
+import { login } from "../../../services/auth-service";
+import LoaderOverlay from "../../Loader.vue";
+import DefaultDialog from "../../DefaultDialog.vue";
 export default {
   name: "LoginComponent",
   components: { LoaderOverlay, DefaultDialog },
