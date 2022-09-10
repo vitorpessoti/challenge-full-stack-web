@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import Login from '@/components/Login';
 import Student from '@/components/Student';
 import StudentForm from '@/components/StudentForm';
 
@@ -7,18 +8,47 @@ Vue.use(VueRouter);
 
 const routes = [
     {
-        name: 'alunos',
-        path: '/alunos',
-        component: Student
+        name: 'Login',
+        path: '/',
+        component: Login,
+        meta: { requireAuth: false }  
     },
     {
-        name: 'alunos-form',
+        name: 'Consulta de Alunos',
+        path: '/alunos',
+        component: Student,
+        meta: {
+            requireAuth: true,
+            grantAll: true
+        }
+    },
+    {
+        name: 'Cadastro de Aluno',
         path: '/alunos-form',
-        component: StudentForm
+        component: StudentForm,
+        params: true,
+        meta: {
+            requireAuth: true,
+            grantAll: true
+        }
     }
 ];
 
-export default new VueRouter({
+const vueRouter = new VueRouter({
     mode: 'history',
     routes
 });
+
+vueRouter.beforeEach((to, from, next) => {
+    if (to.meta.requireAuth) {
+        const authToken = localStorage.getItem('__challenge_token');
+        if (authToken && to.meta.grantAll) {
+            next();
+        } else {
+                next({ name: 'Login' });
+        }
+    } else {
+        next();
+    }
+});
+export default vueRouter;

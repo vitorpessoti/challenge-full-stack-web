@@ -12,7 +12,7 @@ import HomePage from "./components/HomePage.vue";
 export default {
   name: "App",
   components: {
-    HomePage,
+    HomePage
   },
 };
 </script>
@@ -31,6 +31,17 @@ body {
   -moz-osx-font-smoothing: grayscale;
   height: 100vh;
 }
+
+#login-content {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+#main-card {
+  height: 100vh;
+}
+
 .nav-drawer {
   z-index: 9;
 }
@@ -45,6 +56,14 @@ body {
   color: white !important;
 }
 
+.full-border-solid {
+  border: 2px solid black;
+}
+
+.v-data-table__wrapper {
+  border-top: 2px solid black;
+}
+
 .v-data-table-header {
   tr {
     background-color: #cccccc;
@@ -55,7 +74,57 @@ body {
   }
 }
 
-.v-data-table table tbody tr:nth-child(even)>td {
-    background-color: #ececec;
+.v-data-table table tbody tr:nth-child(even) > td {
+  background-color: #ececec;
+}
+
+.no-padding {
+  padding: 0;
+}
+
+.no-border-radius {
+  border-radius: 0 !important;
+}
+
+.tabs-card {
+  border: 2px solid black !important;
+  border-right: 0 !important;
+  height: 100%;
+}
+
+.tabs-card-content {
+  border-top: 2px solid black;
+  padding: 0;
+}
+
+.v-tab--active {
+  border-top: 2px solid black;
+  border-bottom: 2px solid black;
+}
+
+.main-content-title {
+  background-color: #e6e6e6;
+  letter-spacing: normal;
+  font-weight: normal;
+  border: 2px solid black;
+  border-bottom: 0;
+}
+
+.content {
+  grid-area: content;
+  background-color: #efefef;
+  padding: 20px;
+}
+
+.v-application--wrap {
+  background-color: #efefef;
+}
+
+.v-card__title {
+  justify-content: center;
+}
+
+.main-content {
+  border: 2px solid black;
 }
 </style>

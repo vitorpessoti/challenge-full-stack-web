@@ -1,16 +1,32 @@
 <template>
   <div>
+    <LoaderOverlay :isLoading="isLoading" />
+    <DefaultDialog
+      v-if="isDialogVisible"
+      :visible="isDialogVisible"
+      :title="dialogTitle"
+      :body="dialogBody"
+      @closeHandler="afterCloseDialog"
+    />
+    <ConfirmDialog
+      v-if="isConfirmDialogVisible"
+      :visible="isConfirmDialogVisible"
+      :title="confirmDialogTitle"
+      :body="confirmDialogBody"
+      @cancel="deletionCancelled"
+      @confirm="deletionConfirmed"
+    />
     <v-data-table
       :headers="headers"
       :items="items"
-      item-key="name"
-      class="elevation-1"
       :loading="tableLoading"
+      :items-per-page="20"
+      :search="searchString"
+      item-key="cpf"
       loading-text="Carregando..."
       no-data-text="Nenhum registro encontrado."
-      :items-per-page="20"
       hide-default-footer
-      :search="searchString"
+      class="no-border-radius full-border-solid"
     >
       <template v-slot:top>
         <v-row dense class="pa-4 searchBar">
@@ -26,72 +42,12 @@
           </v-col>
 
           <v-col cols="3">
-            <v-btn class="primary-color" x-large dark @click="novo()">
+            <v-btn class="primary-color" x-large dark @click="newItem()">
               Cadastrar Aluno
             </v-btn>
           </v-col>
         </v-row>
       </template>
-      <!-- <template v-slot:top>
-        <v-row dense class="pa-4">
-          <h3>Categorias</h3>
-        </v-row>
-        <v-toolbar flat color="white">
-          <v-row dense>
-            <v-col cols="3" v-if="NrRegFiltro !== null">
-              <span style="font-size: 0.7rem"
-                >Filtro aplicado no <strong>{{ filtroEscolhido }}</strong
-                >, {{ NrRegFiltro }} registro(s) encontrado(s).</span
-              >
-              <v-btn
-                class="mx-5 mt-2"
-                x-small
-                dark
-                fab
-                color="error"
-                @click="LimpaFiltro()"
-              >
-                <v-icon dark class="ml-1">mdi-eraser</v-icon>
-              </v-btn>
-            </v-col>
-
-            <v-col cols="2">
-              <v-select
-                v-model="filtroEscolhido"
-                :items="itemsFiltro"
-                label="Escolha o campo"
-              >
-              </v-select>
-            </v-col>
-
-            <v-col cols="2">
-              <v-text-field
-                placeholder="digite aqui..."
-                v-model="stringFiltro"
-                :disabled="!filtroEscolhido"
-              ></v-text-field>
-            </v-col>
-
-            <v-col cols="1">
-              <v-btn
-                class="mx-5 mt-2"
-                x-small
-                dark
-                color="indigo"
-                @click="filtraRegistro(filtroEscolhido, stringFiltro)"
-              >
-                <v-icon dark class="ml-1">mdi-account-search</v-icon>
-              </v-btn>
-            </v-col>
-
-            <v-col cols="1">
-              <v-btn class="mx-5 mt-2" dark color="indigo" @click="novo()">
-                Cadastrar Aluno
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-toolbar>
-      </template> -->
 
       <template v-slot:[`item.actions`]="{ item }">
         <v-tooltip right>
@@ -114,7 +70,7 @@
             <v-btn
               small
               class="ml-1"
-              @click="deleteItem(item)"
+              @click="showConfirmDialog(item)"
               v-bind="attrs"
               v-on="on"
               v-text="`[Excluir]`"
@@ -129,8 +85,13 @@
 </template>
 
 <script>
+import { getStudents, deleteStudent } from "../services/student-service";
+import LoaderOverlay from "./Loader.vue";
+import DefaultDialog from "./DefaultDialog.vue";
+import ConfirmDialog from "./ConfirmDialog.vue";
 export default {
   name: "StudentComponent",
+  components: { LoaderOverlay, DefaultDialog, ConfirmDialog },
   data: () => {
     return {
       headers: [
@@ -163,45 +124,72 @@ export default {
           caption: "title",
         },
       ],
-      items: [
-        {
-          ra: 100001,
-          name: "Paula Souza",
-          cpf: "121.999.999-99",
-        },
-        {
-          ra: 100002,
-          name: "João Silva",
-          cpf: "122.999.999-99",
-        },
-        {
-          ra: 100003,
-          name: "Marina Miranda",
-          cpf: "123.999.999-99",
-        },
-        {
-          ra: 100004,
-          name: "Maurício Souza",
-          cpf: "124.999.999-99",
-        },
-      ],
-      tableLoading: false,
-      filtroEscolhido: null,
+      items: [],
       searchString: "",
+      tableLoading: false,
+      isLoading: false,
+      isDialogVisible: false,
+      dialogTitle: "",
+      dialogBody: "",
+      isConfirmDialogVisible: false,
+      confirmDialogTitle: "",
+      confirmDialogBody: "",
+      selectedStudent: null,
     };
   },
   methods: {
-    editItem() {
+    async getStudents() {
+      this.isLoading = true;
+      this.tableLoading = true;
+      this.items = [];
+      const response = await getStudents();
+      this.items = response.item;
+      this.tableLoading = false;
+      this.isLoading = false;
+    },
+    newItem() {
       this.$router.push({
-        name: "alunos-form",
-        // params: {
-        //   order_id: parseInt(this.id_pedido),
-        // },
+        path: "/alunos-form",
       });
     },
-    deleteItem(item) {
-      console.log("deleting", item);
+    editItem(item) {
+      this.$router.push({
+        path: "/alunos-form",
+        query: {
+          student: item,
+          name: item.name,
+        },
+      });
     },
+    async deleteItem(item) {
+      const response = await deleteStudent(item.ra);
+      this.dialogTitle = "Exclusão de aluno";
+      this.dialogBody = response.message;
+      this.isDialogVisible = true;
+    },
+    showConfirmDialog(item) {
+      this.selectedStudent = item;
+      this.confirmDialogTitle = "Exclusão de aluno";
+      this.confirmDialogBody = `Tem certeza que deseja excluir o aluno <strong>${item.name.trim()}</strong>?`;
+      this.isConfirmDialogVisible = true;
+    },
+    afterCloseDialog(value) {
+      this.isDialogVisible = value;
+      this.getStudents();
+    },
+    deletionCancelled(value) {
+      this.isConfirmDialogVisible = value;
+    },
+    async deletionConfirmed(value) {
+      this.isConfirmDialogVisible = value;
+      this.isLoading = true;
+      await this.deleteItem(this.selectedStudent);
+      this.selectedStudent = false;
+      this.isLoading = false;
+    },
+  },
+  async mounted() {
+    this.getStudents();
   },
 };
 </script>
